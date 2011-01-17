@@ -1,0 +1,18 @@
+# Eclipse stuff
+/.classpath
+/.project
+/.settings
+
+# Ant stuff
+/build.xml
+/build.num
+/dist
+/bin
+/target
+
+# EditPlus stuff
+*.bak
+
+# Script stuff (users may want their own scripts)
+*.sh
+*.bat
