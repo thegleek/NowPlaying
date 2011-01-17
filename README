@@ -6,14 +6,14 @@ Version History:
 [x] Fixed [+] Added [-] Removed [/] Improved/Changed [i] Information
 
 NowPlaying v1.2 (Bruderschaft) - 16/Jan/2011
-    [x] Fixed plugin compatibility with latest Bukkit code (org.Bukkit.Player --to-- org.Bukkit.Entity.Player)
+[x] Fixed plugin compatibility with latest Bukkit code (org.Bukkit.Player --to-- org.Bukkit.Entity.Player)
 
 NowPlaying v1.1 (Bauhaus) - 16/Jan/2011
-    [+] Added SQLite for the backend db to handle player/alias transactions.
-    [+] Added angelsl's MinecraftFontWidthCalculator code to handle chat pixel limitations
-    [+] Added 5 new commands
-    [-] Removed fatjar and seperate the lastfm.api.jar (SQlite.jar file as well)
-    [x] Fixed plugin compatibility with latest Bukkit code (added "File folder" to the JavaPlugin constructor)
+[+] Added SQLite for the backend db to handle player/alias transactions.
+[+] Added angelsl's MinecraftFontWidthCalculator code to handle chat pixel limitations
+[+] Added 5 new commands
+[-] Removed fatjar and seperate the lastfm.api.jar (SQlite.jar file as well)
+[x] Fixed plugin compatibility with latest Bukkit code (added "File folder" to the JavaPlugin constructor)
 
 NowPlaying v1.0 (Wumpscut) - 07/Jan/2011
-	[i] Initial release
+[i] Initial release
