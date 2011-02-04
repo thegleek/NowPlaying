@@ -3,7 +3,15 @@ Direct download: http://dl.dropbox.com/u/6189558/NowPlaying.jar
 Support at: http://forums.bukkit.org/threads/nowplaying-last-fm-plugin-within-minecraft-chat.237/
 
 Version History:
-[x] Fixed [+] Added [-] Removed [/] Improved/Changed [i] Information
+[x]Fixed [+]Added [-]Removed [/]Improved/Changed [i]Information
+
+NowPlaying v1.3 (CrystalCastles) - 04/Feb/2011
+[-] Removed old plugin.yml file
+[+] Added new plugin.yml with authorized commands
+[/] Removed depreciated onPlayerCommand event with current onCommand event handler
+[+] Added npb command for broadcasting to the entire server
+[/] Renamed the help command to nphelp so not to clutter the default help output
+[i] Cleaned up code 
 
 NowPlaying v1.2 (Bruderschaft) - 16/Jan/2011
 [x] Fixed plugin compatibility with latest Bukkit code (org.Bukkit.Player --to-- org.Bukkit.Entity.Player)
