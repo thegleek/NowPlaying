@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 
 public class cChat {
-	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger("Minecraft");
 	public static Player player = null;
 
@@ -24,8 +23,16 @@ public class cChat {
 	}
 
 	public static void broadcast(String message) {
-		for (Player p : cPlayerListener.plugin.getServer().getOnlinePlayers())
-			p.sendMessage(message);
+		// slow ghetto way
+		// for (Player p :
+		// cPlayerListener.plugin.getServer().getOnlinePlayers()) {
+		// p.sendMessage("--- " + message);
+		// }
+
+		// simple quick efficient way
+		cPlayerListener.plugin.getServer().broadcastMessage(message);
+
+		log.info("[NowPlaying] broadcasting message: " + message);
 	}
 
 	// the following code is courtesy of angelsl's MinecraftFontWidthCalculator

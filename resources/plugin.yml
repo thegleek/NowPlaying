@@ -1,0 +1,43 @@
+name: NowPlaying
+main: com.bukkit.thegleek.NowPlaying.NowPlaying
+version: 1.3
+website: http://www.bukkit.org
+author: thegleek
+description: >
+             Hooks the Last.FM API into minecraft by displaying what in-game
+             users are listening to with their mp3 players (winamp, foobar2000, etc...)
+commands:
+  np:
+    description: Shows what you/player is listening to
+    usage: /<command> [player]
+  npb:
+    description: Broadcasts what you/player is listening to
+    usage: /<command> [player]
+  npver:
+    description: Displays the NowPlaying plugin version
+    usage: |
+           /<command>
+           Example: /<command> - displays plugin version
+  npsize:
+    description: Displays how many Alias records exist in the db
+    usage: |
+           /<command> - displays how many aliases exist
+  npadd:
+    description: Adds your lastFM alias to your nick
+    usage: |
+           /<command> [lastFM alias]
+           Example: /<command> deadmau5 - adds lastfm alias 'deadmau5' to your player nick 'thegleek'
+  npdel:
+    description: Deletes your lastFM alias
+    usage: |
+           /<command> - deletes your alias
+  nphelp:
+    description: Displays NowPlaying help
+    usage: |
+           /<command> - shows help on this plugin
+  npcheck:
+    description: Check if entry exists in the db
+    usage: |
+           /<command> [player/alias]
+           Example: /<command> - Lists all db entries in player:alias format - only on the admin console
+           Example: /<command> thegleek - Will show if 'thegleek' exists or not in the db

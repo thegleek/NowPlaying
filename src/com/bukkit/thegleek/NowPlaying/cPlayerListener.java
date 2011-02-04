@@ -7,9 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import de.umass.lastfm.*;
@@ -36,167 +34,125 @@ public class cPlayerListener extends PlayerListener {
 		aliasList = aList;
 	}
 
-	@Override
-	public void onPlayerCommand(PlayerChatEvent event) {
-		String[] sCommand = event.getMessage().split(" ");
+	public boolean performNPSize() {
+		int iAliasSize = aliasList.getSize();
+		cChat.send(ChatColor.AQUA + "Alias records in db: " + iAliasSize);
+		return true;
+	}
 
-		Player player = event.getPlayer();
-		// World world = player.getWorld();
-		cChat.save(player);
+	public boolean performNPAdd(Player player, String[] split) {
+		if (split.length > 0) {
+			String sLongName = "";
+			int x = 0;
 
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/pos")) {
-			if (sCommand.length == 1) {
-				Location location = player.getLocation();
-				player.sendMessage("You are currently at " + location.getX()
-						+ "," + location.getY() + "," + location.getZ()
-						+ " with " + location.getYaw() + " yaw and "
-						+ location.getPitch() + " pitch");
-			} else if (sCommand.length == 4) {
-				try {
-					double x = Double.parseDouble(sCommand[1]);
-					double y = Double.parseDouble(sCommand[2]);
-					double z = Double.parseDouble(sCommand[3]);
-					player.teleportTo(new Location(player.getWorld(), x, y, z));
-				} catch (NumberFormatException ex) {
-					player.sendMessage("Given location is invalid");
+			for (String s : split) {
+				if (x > 0) {
+					sLongName += s + " ";
+				} else {
+					sLongName = s;
 				}
-			} else {
-				player.sendMessage("Usage: '/pos' to get current position, or '/pos x y z' to teleport to x,y,z");
+
+				x++;
 			}
-			event.setCancelled(true);
+			aliasList.addAlias(player, sLongName.trim());
 		}
 
-		if (sCommand[0].equalsIgnoreCase("/help")) {
-			String sCmd = ChatColor.WHITE + "/np (player)" + ChatColor.GOLD
-					+ " - " + ChatColor.YELLOW
-					+ "Shows what you/player is listening to";
-			cChat.send(sCmd);
+		return true;
+	}
 
-			sCmd = ChatColor.WHITE + "/npver" + ChatColor.GOLD + " - "
-					+ ChatColor.YELLOW
-					+ "Displays the NowPlaying plugin version";
-			cChat.send(sCmd);
+	public boolean performNPDel(Player player, String[] split) {
+		aliasList.delAlias(player);
 
-			sCmd = ChatColor.WHITE + "/npadd [lastFM name]" + ChatColor.GOLD
-					+ " - " + ChatColor.YELLOW
-					+ "Adds your lastFM alias to your nick";
-			cChat.send(sCmd);
+		return true;
+	}
 
-			sCmd = ChatColor.WHITE + "/npdel" + ChatColor.GOLD + " - "
-					+ ChatColor.YELLOW + "Deletes your lastFM alias";
-			cChat.send(sCmd);
+	public boolean performNPCheck(String[] split) {
+		if (split.length == 0) {
+			Map<String, String> m = AliasList.lastfmList;
+			Iterator<Map.Entry<String, String>> it = m.entrySet().iterator();
 
-			sCmd = ChatColor.WHITE + "/npcheck (player/alias)" + ChatColor.GOLD
-					+ " - " + ChatColor.YELLOW
-					+ "Check if entry exists in the db";
-			cChat.send(sCmd);
+			while (it.hasNext()) {
+				Map.Entry<String, String> pairs = it.next();
 
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/debug")) {
-			plugin.setDebugging(player, !plugin.isDebugging(player));
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/npver")) {
-			cChat.send(ChatColor.GOLD + this.np.getVersion());
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/npsize")) {
-			int iAliasSize = aliasList.getSize();
-			cChat.send(ChatColor.AQUA + "Alias records in db: " + iAliasSize);
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/npadd")) {
-			if (sCommand.length > 1) {
-				String sLongName = "";
-				int x = 0;
-
-				for (String s : sCommand) {
-					if (x > 0)
-						sLongName += s + " ";
-
-					x++;
-				}
-				aliasList.addAlias(player, sLongName.trim());
+				log.info(pairs.getKey() + ":" + pairs.getValue());
 			}
-			event.setCancelled(true);
-		}
+		} else if (split.length == 1) {
+			String sFound = findValueInStack(split[0], AliasList.lastfmList);
 
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/npdel")) {
-			aliasList.delAlias(player);
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/npcheck")) {
-			if (sCommand.length == 1) {
-				Map<String, String> m = AliasList.lastfmList;
-				Iterator<Map.Entry<String, String>> it = m.entrySet()
-						.iterator();
-
-				while (it.hasNext()) {
-					Map.Entry<String, String> pairs = it.next();
-
-					log.info(pairs.getKey() + ":" + pairs.getValue());
-				}
-
-			} else if (sCommand.length == 2) {
-				String sFound = findValueInStack(sCommand[1],
-						AliasList.lastfmList);
-
-				if (sFound != null) {
-					cChat.send(ChatColor.AQUA
-							+ "LastFM alias exists in the db...");
-				}
-
-				if (AliasList.lastfmList.containsKey(sCommand[1])) {
-					cChat.send(ChatColor.AQUA + "Player exists in the db...");
-				}
-			}
-			event.setCancelled(true);
-		}
-
-		if ((!event.isCancelled()) && sCommand[0].equalsIgnoreCase("/np")) {
-			String key = cControl.getApiKey(NowPlaying.watching[0]);
-
-			if (key == NowPlaying.defaults[0]) {
-				cChat.send(ChatColor.RED
-						+ "The server admin has not set the APIKEY for this plugin to work.");
-				event.setCancelled(true);
+			if (sFound != null) {
+				cChat.send(ChatColor.AQUA + "LastFM alias exists in the db...");
 			}
 
-			if (sCommand.length == 1) {
-				String sFound = findKeyInStack(player.getName(),
-						AliasList.lastfmList);
+			if (AliasList.lastfmList.containsKey(split[0])) {
+				cChat.send(ChatColor.AQUA + "Player exists in the db...");
+			}
+		}
 
-				if (sFound == null) {
-					sFound = player.getName();
-				}
+		return true;
+	}
 
-				aTextOutput = getRecentTrack(key, sFound, player.getName());
+	public boolean performNPHelp() {
+		String sCmd = ChatColor.WHITE + "/np (player)" + ChatColor.GOLD + " - "
+				+ ChatColor.YELLOW + "Shows what you/player is listening to";
+		cChat.send(sCmd);
 
-				for (String s : this.aTextOutput) {
-					cChat.send(s);
-				}
-			} else if (sCommand.length == 2) {
-				String sFound = findKeyInStack(sCommand[1],
-						AliasList.lastfmList);
+		sCmd = ChatColor.WHITE + "/npver" + ChatColor.GOLD + " - "
+				+ ChatColor.YELLOW + "Displays the NowPlaying plugin version";
+		cChat.send(sCmd);
 
-				if (sFound == null) {
-					sFound = sCommand[1];
-				}
+		sCmd = ChatColor.WHITE + "/npadd [lastFM name]" + ChatColor.GOLD
+				+ " - " + ChatColor.YELLOW
+				+ "Adds your lastFM alias to your nick";
+		cChat.send(sCmd);
 
-				aTextOutput = getRecentTrack(key, sFound, sCommand[1]);
+		sCmd = ChatColor.WHITE + "/npdel" + ChatColor.GOLD + " - "
+				+ ChatColor.YELLOW + "Deletes your lastFM alias";
+		cChat.send(sCmd);
 
-				for (String s : this.aTextOutput) {
+		sCmd = ChatColor.WHITE + "/npcheck (player/alias)" + ChatColor.GOLD
+				+ " - " + ChatColor.YELLOW + "Check if entry exists in the db";
+		cChat.send(sCmd);
+
+		return true;
+	}
+
+	public boolean performNP(Player player, String[] split, String key, boolean bBroadcast) {
+		if (split.length == 0) {
+			String sFound = findKeyInStack(player.getName(),
+					AliasList.lastfmList);
+
+			if (sFound == null) {
+				sFound = player.getName();
+			}
+
+			aTextOutput = getRecentTrack(key, sFound, player.getName());
+
+			for (String s : this.aTextOutput) {
+				if (bBroadcast) {
+					cChat.broadcast(s);
+				} else {
 					cChat.send(s);
 				}
 			}
-			event.setCancelled(true);
+		} else if (split.length == 1) {
+			String sFound = findKeyInStack(split[0], AliasList.lastfmList);
+
+			if (sFound == null) {
+				sFound = split[0];
+			}
+
+			aTextOutput = getRecentTrack(key, sFound, split[0]);
+
+			for (String s : this.aTextOutput) {
+				if (bBroadcast) {
+					cChat.broadcast(s);
+				} else {
+					cChat.send(s);
+				}
+			}
 		}
+
+		return true;
 	}
 
 	@Override
