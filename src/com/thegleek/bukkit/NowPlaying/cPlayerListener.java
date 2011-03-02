@@ -1,4 +1,4 @@
-package com.bukkit.thegleek.NowPlaying;
+package com.thegleek.bukkit.NowPlaying;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,39 +7,107 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerListener;
+
 import de.umass.lastfm.*;
 
-/**
- * Handle events for all Player related events
- * 
- * @author thegleek
- */
-public class cPlayerListener extends PlayerListener {
+public class cPlayerListener implements CommandExecutor {
 	private static final Logger log = Logger.getLogger("Minecraft");
-	public static NowPlaying plugin;
-	public NowPlaying np;
+
+	public NowPlaying plugin;
+	public static NowPlaying StaticNP;
 	public static AliasList aliasList;
 	private ArrayList<String> aTextOutput = new ArrayList<String>();
 	public static String sMaxString = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"; // len=44
 
+	/**
+	 * @param instance
+	 */
 	public cPlayerListener(NowPlaying instance) {
-		plugin = instance;
-		this.np = plugin;
+		this.plugin = instance;
+		StaticNP = instance;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender
+	 * , org.bukkit.command.Command, java.lang.String, java.lang.String[])
+	 */
+	public boolean onCommand(CommandSender sender, Command command,
+			String commandLabel, String[] args) {
+		boolean bRet = false;
+		String[] trimmedArgs = args;
+		String commandName = command.getName().toLowerCase();
+		String key = cControl.getApiKey(NowPlaying.watching[0]);
+
+		log.info("[NowPlaying] command: " + command.getName());
+
+		if (sender instanceof Player) {
+			Player player = (Player) sender;
+
+			cChat.save(player);
+
+			if (commandName.equals("nphelp")) {
+				return performNPHelp();
+			} else if (commandName.equals("npver")) {
+				cChat.send(ChatColor.GOLD + plugin.getVersion());
+				bRet = true;
+			} else if (commandName.equals("npsize")) {
+				return performNPSize();
+			} else if (commandName.equals("npadd")) {
+				return performNPAdd(player, trimmedArgs);
+			} else if (commandName.equals("npdel")) {
+				return performNPDel(player, trimmedArgs);
+			} else if (commandName.equals("npcheck")) {
+				return performNPCheck(trimmedArgs);
+			} else if (commandName.equals("npb")) {
+				if (key == NowPlaying.defaults[0]) {
+					cChat.send(ChatColor.DARK_RED
+							+ "The server admin has not set the APIKEY yet!");
+					bRet = true;
+				} else {
+					return performNP(player, trimmedArgs, key, true);
+				}
+			} else if (commandName.equals("np")) {
+				if (key == NowPlaying.defaults[0]) {
+					cChat.send(ChatColor.DARK_RED
+							+ "The server admin has not set the APIKEY yet!");
+					bRet = true;
+				} else {
+					return performNP(player, trimmedArgs, key, false);
+				}
+			}
+		}
+
+		return bRet;
+	}
+
+	/**
+	 * @param aList
+	 */
 	public static void setAliasList(AliasList aList) {
 		aliasList = aList;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean performNPSize() {
 		int iAliasSize = aliasList.getSize();
 		cChat.send(ChatColor.AQUA + "Alias records in db: " + iAliasSize);
 		return true;
 	}
 
+	/**
+	 * @param player
+	 * @param split
+	 * @return
+	 */
 	public boolean performNPAdd(Player player, String[] split) {
 		if (split.length > 0) {
 			String sLongName = "";
@@ -60,12 +128,21 @@ public class cPlayerListener extends PlayerListener {
 		return true;
 	}
 
+	/**
+	 * @param player
+	 * @param split
+	 * @return
+	 */
 	public boolean performNPDel(Player player, String[] split) {
 		aliasList.delAlias(player);
 
 		return true;
 	}
 
+	/**
+	 * @param split
+	 * @return
+	 */
 	public boolean performNPCheck(String[] split) {
 		if (split.length == 0) {
 			Map<String, String> m = AliasList.lastfmList;
@@ -74,7 +151,8 @@ public class cPlayerListener extends PlayerListener {
 			while (it.hasNext()) {
 				Map.Entry<String, String> pairs = it.next();
 
-				log.info(pairs.getKey() + ":" + pairs.getValue());
+				log.info("[NowPlaying] " + pairs.getKey() + ":"
+						+ pairs.getValue());
 			}
 		} else if (split.length == 1) {
 			String sFound = findValueInStack(split[0], AliasList.lastfmList);
@@ -91,9 +169,21 @@ public class cPlayerListener extends PlayerListener {
 		return true;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean performNPHelp() {
 		String sCmd = ChatColor.WHITE + "/np (player)" + ChatColor.GOLD + " - "
 				+ ChatColor.YELLOW + "Shows what you/player is listening to";
+		cChat.send(sCmd);
+
+		sCmd = ChatColor.WHITE + "/npb (player)" + ChatColor.GOLD + " - "
+				+ ChatColor.YELLOW
+				+ "Broadcasts what you/player is listening to";
+		cChat.send(sCmd);
+
+		sCmd = ChatColor.WHITE + "/nphelp" + ChatColor.GOLD + " - "
+				+ ChatColor.YELLOW + "Help for the NowPlaying commands";
 		cChat.send(sCmd);
 
 		sCmd = ChatColor.WHITE + "/npver" + ChatColor.GOLD + " - "
@@ -116,7 +206,15 @@ public class cPlayerListener extends PlayerListener {
 		return true;
 	}
 
-	public boolean performNP(Player player, String[] split, String key, boolean bBroadcast) {
+	/**
+	 * @param player
+	 * @param split
+	 * @param key
+	 * @param bBroadcast
+	 * @return
+	 */
+	public boolean performNP(Player player, String[] split, String key,
+			Boolean bBroadcast) {
 		if (split.length == 0) {
 			String sFound = findKeyInStack(player.getName(),
 					AliasList.lastfmList);
@@ -125,7 +223,8 @@ public class cPlayerListener extends PlayerListener {
 				sFound = player.getName();
 			}
 
-			aTextOutput = getRecentTrack(key, sFound, player.getName());
+			aTextOutput = getRecentTrack(key, sFound, player.getName(),
+					bBroadcast);
 
 			for (String s : this.aTextOutput) {
 				if (bBroadcast) {
@@ -141,7 +240,7 @@ public class cPlayerListener extends PlayerListener {
 				sFound = split[0];
 			}
 
-			aTextOutput = getRecentTrack(key, sFound, split[0]);
+			aTextOutput = getRecentTrack(key, sFound, split[0], bBroadcast);
 
 			for (String s : this.aTextOutput) {
 				if (bBroadcast) {
@@ -155,37 +254,32 @@ public class cPlayerListener extends PlayerListener {
 		return true;
 	}
 
-	@Override
-	public void onPlayerJoin(PlayerEvent event) {
-		Player player = event.getPlayer();
-
-		String location = (int) player.getLocation().getX() + "x, "
-				+ (int) player.getLocation().getY() + "y, "
-				+ (int) player.getLocation().getZ() + "z";
-		String ip = player.getAddress().getAddress().getHostAddress();
-
-		log.info(player.getName() + " (" + ip + ") joined the server @ "
-				+ location);
-	}
-
-	@Override
-	public void onPlayerQuit(PlayerEvent event) {
-		Player player = event.getPlayer();
-		log.info(player.getName() + " left the server...");
-	}
-
+	/**
+	 * @param apiKey
+	 * @param user
+	 * @param alias
+	 * @param bBroadcast
+	 * @return
+	 */
 	public static ArrayList<String> getRecentTrack(String apiKey, String user,
-			String alias) {
-		String output = "";
+			String alias, Boolean bBroadcast) {
 		String preOutput = "";
 		String currentInfo = "";
 		String sDisplayName = "";
 		ArrayList<String> aOutput = new ArrayList<String>();
 
-		if (user.equalsIgnoreCase(alias)) {
-			sDisplayName = ChatColor.DARK_AQUA + user;
+		if (bBroadcast) {
+			if (user.equalsIgnoreCase(alias)) {
+				sDisplayName = ChatColor.GOLD + user;
+			} else {
+				sDisplayName = ChatColor.YELLOW + alias;
+			}
 		} else {
-			sDisplayName = ChatColor.AQUA + alias;
+			if (user.equalsIgnoreCase(alias)) {
+				sDisplayName = ChatColor.DARK_AQUA + user;
+			} else {
+				sDisplayName = ChatColor.AQUA + alias;
+			}
 		}
 
 		try {
@@ -240,13 +334,18 @@ public class cPlayerListener extends PlayerListener {
 						// of the loop the first time
 			}
 		} catch (Exception ex) {
-			output = "last.fm api did not work: " + ex.getMessage();
-			log.warning(output);
+			log.warning("[NowPlaying] last.fm api failed: " + ex.toString());
 		}
 
 		return aOutput;
 	}
 
+	/**
+	 * @param sLeft
+	 * @param sRight
+	 * @param cColor
+	 * @return
+	 */
 	private static ArrayList<String> ParseString(String sLeft, String sRight,
 			ChatColor cColor) {
 		String Ltemp = "";
@@ -286,6 +385,11 @@ public class cPlayerListener extends PlayerListener {
 		return outArray;
 	}
 
+	/**
+	 * @param needle
+	 * @param haystack
+	 * @return
+	 */
 	private String findValueInStack(String needle, Map<String, String> haystack) {
 		Iterator<Map.Entry<String, String>> it = haystack.entrySet().iterator();
 
@@ -300,6 +404,11 @@ public class cPlayerListener extends PlayerListener {
 		return null;
 	}
 
+	/**
+	 * @param needle
+	 * @param haystack
+	 * @return
+	 */
 	private String findKeyInStack(String needle, Map<String, String> haystack) {
 		Iterator<Map.Entry<String, String>> it = haystack.entrySet().iterator();
 

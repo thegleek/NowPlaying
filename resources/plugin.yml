@@ -1,7 +1,7 @@
 name: NowPlaying
-main: com.bukkit.thegleek.NowPlaying.NowPlaying
-version: 1.3
-website: http://www.bukkit.org
+main: com.thegleek.bukkit.NowPlaying.NowPlaying
+version: 1.4
+website: http://www.thegleek.com/
 author: thegleek
 description: >
              Hooks the Last.FM API into minecraft by displaying what in-game

@@ -1,4 +1,4 @@
-package com.bukkit.thegleek.NowPlaying;
+package com.thegleek.bukkit.NowPlaying;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -6,6 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.Server;
 
+/**
+ * @author thegleek
+ * 
+ */
 public class AliasList {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public static HashMap<String, String> lastfmList;
@@ -13,12 +17,19 @@ public class AliasList {
 	public static Player player = null;
 	public static Player dupPlayer = null;
 
+	/**
+	 * @param serv
+	 */
 	public AliasList(Server serv) {
 		this.server = serv;
 		cPlayerData.initialize();
 		lastfmList = cPlayerData.getAliases();
 	}
 
+	/**
+	 * @param pPlayer
+	 * @param lastFMname
+	 */
 	public void addAlias(Player pPlayer, String lastFMname) {
 		String msg = "";
 
@@ -49,6 +60,9 @@ public class AliasList {
 		}
 	}
 
+	/**
+	 * @param pPlayer
+	 */
 	public void delAlias(Player pPlayer) {
 		player = pPlayer;
 		String inGameName = player.getName();
@@ -68,6 +82,9 @@ public class AliasList {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public int getSize() {
 		int iSize = 0;
 

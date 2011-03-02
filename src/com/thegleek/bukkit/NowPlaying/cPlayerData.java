@@ -1,4 +1,4 @@
-package com.bukkit.thegleek.NowPlaying;
+package com.thegleek.bukkit.NowPlaying;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -11,16 +11,26 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author thegleek
+ * 
+ */
 public class cPlayerData {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public final static String DATABASE = "jdbc:sqlite:NowPlaying.db";
 
+	/**
+	 * 
+	 */
 	public static void initialize() {
 		if (!tableExists()) {
 			createTable();
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public static HashMap<String, String> getAliases() {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		Connection conn = null;
@@ -72,6 +82,9 @@ public class cPlayerData {
 		return ret;
 	}
 
+	/**
+	 * @return
+	 */
 	private static boolean tableExists() {
 		Connection conn = null;
 		ResultSet rs = null;
@@ -105,6 +118,9 @@ public class cPlayerData {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private static void createTable() {
 		Connection conn = null;
 		Statement st = null;
@@ -130,6 +146,11 @@ public class cPlayerData {
 		}
 	}
 
+	/**
+	 * @param sPlayer
+	 * @param sAlias
+	 * @return
+	 */
 	public static boolean addAlias(String sPlayer, String sAlias) {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -165,6 +186,10 @@ public class cPlayerData {
 		return bSuccess;
 	}
 
+	/**
+	 * @param sPlayer
+	 * @return
+	 */
 	public static boolean delAlias(String sPlayer) {
 		Connection conn = null;
 		PreparedStatement ps = null;

@@ -1,8 +1,12 @@
-package com.bukkit.thegleek.NowPlaying;
+package com.thegleek.bukkit.NowPlaying;
 
 import java.util.Formatter;
 import java.util.Locale;
 
+/**
+ * @author thegleek
+ * 
+ */
 public class cSQLQuery {
 	protected final static String CreateTable = ""
 			+ "CREATE TABLE `PlayerAlias` (" + "`id` INTEGER PRIMARY KEY,"
@@ -13,6 +17,9 @@ public class cSQLQuery {
 
 	protected final static String DelAlias = "DELETE FROM PlayerAlias WHERE name = ?";
 
+	/**
+	 * 
+	 */
 	public static void FormatTesting() {
 		StringBuilder sb = new StringBuilder();
 		// Send all output to the Appendable object sb

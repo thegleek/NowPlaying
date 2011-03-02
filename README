@@ -5,6 +5,11 @@ Support at: http://forums.bukkit.org/threads/nowplaying-last-fm-plugin-within-mi
 Version History:
 [x]Fixed [+]Added [-]Removed [/]Improved/Changed [i]Information
 
+NowPlaying v1.4 (Diorama) - 01/Mar/2011
+[-] Removed code to display player logins/logoffs as this is done by other plugins
+[/] Renamed package from com.bukkit.thegleek.NowPlaying to com.thegleek.bukkit.NowPlaying
+[i] Updated code to make it work with the latest bukkit (removed constructors, etc...)
+
 NowPlaying v1.3 (CrystalCastles) - 04/Feb/2011
 [-] Removed old plugin.yml file
 [+] Added new plugin.yml with authorized commands
