@@ -45,15 +45,15 @@ public class NowPlaying extends JavaPlugin {
 			this.PrevSettings.load();
 		}
 
-		File folder = this.getFile();
-
+		File folder = this.getDataFolder();
+		
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
 
-		if (!new File(getDataFolder(), pluginSettingsFile).exists()) {
+		if (!new File(this.getDataFolder(), pluginSettingsFile).exists()) {
 			try {
-				new File(getDataFolder(), pluginSettingsFile).createNewFile();
+				new File(this.getDataFolder(), pluginSettingsFile).createNewFile();
 			} catch (IOException ex) {
 				log.warning("[NowPlaying] " + ex.toString());
 			}
@@ -132,7 +132,7 @@ public class NowPlaying extends JavaPlugin {
 					.println("[NowPlaying]: Previous settings folder (you can delete this folder): "
 							+ this.prevdir.getAbsolutePath() + "\\");
 			System.out.println("[NowPlaying]: Current settings folder: "
-					+ getDataFolder().getAbsolutePath() + "\\");
+					+ this.getDataFolder().getAbsolutePath() + "\\");
 		} else {
 			for (int x = 0; x < watching.length; x++)
 				cControl.add(watching[x],
