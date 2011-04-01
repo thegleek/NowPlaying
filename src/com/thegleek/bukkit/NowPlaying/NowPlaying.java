@@ -20,9 +20,9 @@ public class NowPlaying extends JavaPlugin {
 	// public Interpreter beanshell;// TODO: REMOVE BEFORE DISTRIBUTION!
 	private final static String PLUGIN_NAME = "NowPlaying";
 	public static final Logger log = Logger.getLogger("Minecraft");
-	private static final String CODE_NAME = "Diorama";
+	private static final String CODE_NAME = "Electrophile";
 	private String pluginSettingsFile = PLUGIN_NAME + ".settings";
-	private String sPrevDir = PLUGIN_NAME + "\\";
+	private String sPrevDir = PLUGIN_NAME + "/";
 	private File prevdir;
 	public static HashMap<String, String> players;
 	public static cControl Watch = new cControl();
@@ -40,7 +40,7 @@ public class NowPlaying extends JavaPlugin {
 		this.prevdir = new File(sPrevDir);
 		this.bLegacyPath = this.prevdir.exists();
 		if (this.bLegacyPath) {
-			this.PrevSettings = new cProperty(sPrevDir + "\\"
+			this.PrevSettings = new cProperty(sPrevDir + "/"
 					+ pluginSettingsFile);
 			this.PrevSettings.load();
 		}
@@ -113,7 +113,7 @@ public class NowPlaying extends JavaPlugin {
 		cPlayerListener.setAliasList(new AliasList(getServer()));
 
 		String sPluginDir = this.getDataFolder().getPath();
-		Settings = new cProperty(sPluginDir + "\\" + pluginSettingsFile);
+		Settings = new cProperty(sPluginDir + "/" + pluginSettingsFile);
 
 		if (this.bLegacyPath) {
 			Map<String, String> map = new HashMap<String, String>();
@@ -130,9 +130,9 @@ public class NowPlaying extends JavaPlugin {
 					.println("[NowPlaying]: Previous settings have been copied over to the new location.");
 			System.out
 					.println("[NowPlaying]: Previous settings folder (you can delete this folder): "
-							+ this.prevdir.getAbsolutePath() + "\\");
+							+ this.prevdir.getAbsolutePath() + "/");
 			System.out.println("[NowPlaying]: Current settings folder: "
-					+ this.getDataFolder().getAbsolutePath() + "\\");
+					+ this.getDataFolder().getAbsolutePath() + "/");
 		} else {
 			for (int x = 0; x < watching.length; x++)
 				cControl.add(watching[x],

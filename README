@@ -5,6 +5,9 @@ Support at: http://forums.bukkit.org/threads/nowplaying-last-fm-plugin-within-mi
 Version History:
 [x]Fixed [+]Added [-]Removed [/]Improved/Changed [i]Information
 
+NowPlaying v1.5 (Electrophile) - 01/Apr/2011
+[/] Improved: Replaced all "windows" \ slashes with "linux" compatible / slashes! Thanks to DZeroX, Drakonas, and BangL for bringing this to my attention!
+
 NowPlaying v1.4.1 (Diorama) - 02/Mar/2011
 [x] fixed: the settings file wasn't getting created with new installs, thanks to lonerzboy for bringing this to my attention!
 
